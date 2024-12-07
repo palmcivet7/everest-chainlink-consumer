@@ -66,7 +66,7 @@ contract EverestConsumer is IEverestConsumer, ChainlinkClient, Ownable {
         IERC20(_chainlinkTokenAddress()).safeTransferFrom(msg.sender, address(this), oraclePayment);
 
         Chainlink.Request memory request = _buildOperatorRequest(jobId, this.fulfill.selector);
-        request.addBytes("address", abi.encode(_revealee));
+        request._addBytes("address", abi.encode(_revealee));
 
         bytes32 requestId = _sendOperatorRequest(request, oraclePayment);
 
