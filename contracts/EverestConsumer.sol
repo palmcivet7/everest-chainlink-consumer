@@ -55,8 +55,8 @@ contract EverestConsumer is IEverestConsumer, ChainlinkClient, Ownable {
         uint256 _oraclePayment,
         string memory _signUpURL
     ) {
-        setChainlinkToken(_link);
-        setChainlinkOracle(_oracle);
+        _setChainlinkToken(_link);
+        _setChainlinkOracle(_oracle);
         jobId = stringToBytes32(_jobId);
         oraclePayment = _oraclePayment;
         signUpURL = _signUpURL;
