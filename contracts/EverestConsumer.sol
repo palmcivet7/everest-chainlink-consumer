@@ -69,10 +69,10 @@ contract EverestConsumer is IEverestConsumer, ChainlinkClient, Ownable {
 
         IERC20(chainlinkTokenAddress()).safeTransferFrom(msg.sender, address(this), oraclePayment);
 
-        Chainlink.Request memory request = buildOperatorRequest(jobId, this.fulfill.selector);
+        Chainlink.Request memory request = _buildOperatorRequest(jobId, this.fulfill.selector);
         request.addBytes("address", abi.encode(_revealee));
 
-        bytes32 requestId = sendOperatorRequest(request, oraclePayment);
+        bytes32 requestId = _sendOperatorRequest(request, oraclePayment);
 
         uint40 expiration = uint40(block.timestamp) + OPERATOR_EXPIRATION_TIME;
         _requests[requestId] = Request({
@@ -93,7 +93,7 @@ contract EverestConsumer is IEverestConsumer, ChainlinkClient, Ownable {
     function fulfill(bytes32 _requestId, Status _status, uint40 _kycTimestamp)
         external
         override
-        recordChainlinkFulfillment(_requestId)
+        _recordChainlinkFulfillment(_requestId)
     {
         if (_status == Status.KYCUser) {
             if (_kycTimestamp == 0) {
@@ -124,7 +124,7 @@ contract EverestConsumer is IEverestConsumer, ChainlinkClient, Ownable {
         if (request.revealer != msg.sender) {
             revert EverestConsumer__NotOwnerOfRequest();
         }
-        cancelChainlinkRequest(_requestId, oraclePayment, this.fulfill.selector, request.expiration);
+        _cancelChainlinkRequest(_requestId, oraclePayment, this.fulfill.selector, request.expiration);
         IERC20(chainlinkTokenAddress()).safeTransfer(msg.sender, oraclePayment);
         request.isCanceled = true;
     }
@@ -164,11 +164,11 @@ contract EverestConsumer is IEverestConsumer, ChainlinkClient, Ownable {
     }
 
     function setOracle(address _oracle) external override onlyOwner {
-        setChainlinkOracle(_oracle);
+        _setChainlinkOracle(_oracle);
     }
 
     function setLink(address _link) external override onlyOwner {
-        setChainlinkToken(_link);
+        _setChainlinkToken(_link);
     }
 
     function setOraclePayment(uint256 _oraclePayment) external override onlyOwner {
@@ -180,11 +180,11 @@ contract EverestConsumer is IEverestConsumer, ChainlinkClient, Ownable {
     }
 
     function oracleAddress() external view override returns (address) {
-        return chainlinkOracleAddress();
+        return _chainlinkOracleAddress();
     }
 
     function linkAddress() external view override returns (address) {
-        return chainlinkTokenAddress();
+        return _chainlinkTokenAddress();
     }
 
     function stringToBytes32(string memory _source) private pure returns (bytes32) {
