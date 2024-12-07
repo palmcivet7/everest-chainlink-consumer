@@ -93,7 +93,7 @@ contract EverestConsumer is IEverestConsumer, ChainlinkClient, Ownable {
     function fulfill(bytes32 _requestId, Status _status, uint40 _kycTimestamp)
         external
         override
-        _recordChainlinkFulfillment(_requestId)
+        recordChainlinkFulfillment(_requestId)
     {
         if (_status == Status.KYCUser) {
             if (_kycTimestamp == 0) {
