@@ -125,7 +125,7 @@ contract EverestConsumer is IEverestConsumer, ChainlinkClient, Ownable {
             revert EverestConsumer__NotOwnerOfRequest();
         }
         _cancelChainlinkRequest(_requestId, oraclePayment, this.fulfill.selector, request.expiration);
-        IERC20(chainlinkTokenAddress()).safeTransfer(msg.sender, oraclePayment);
+        IERC20(_chainlinkTokenAddress()).safeTransfer(msg.sender, oraclePayment);
         request.isCanceled = true;
     }
 
